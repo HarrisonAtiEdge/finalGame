@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Rules</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+        // Retrieve the selected game information from localStorage
+        var selectedGame = localStorage.getItem('selectedGame');
+
+        // Display rules based on the selected game
+        function displayRules() {
+            var rulesContainer = document.getElementById('rulesContainer');
+            var rulesbtnContainer = document.querySelector('.rulesbtn');
+
+            var rulesHTML = '';
+
+            // Create the button once
+            var button1 = document.createElement('button');
+                button1.className = 'startbtn';
+                button1.textContent = 'Start Quiz';
+                rulesbtnContainer.appendChild(button1);
+
+
+            if (selectedGame === 'game1') {
+                rulesHTML += `<p>1.You have to answer 3 questions</p>
+                <p>2.Each question will end in 15 Secs</p>
+                <p>3.Quick clicks on the right answer to score higher! </p>`;
+                // rulesHTML += '<button onclick="quiz1Screen(\'game1/index.html\')">Quiz1</button>';
+                button1.onclick = function() {
+                    quiz1Screen('quiz/quiz1.html');
+        };
+            }else if (selectedGame === 'game2') {
+                rulesHTML += `<p>1.You have to answer 3 questions</p>
+                <p>2.Each question will end in 15 Secs</p>
+                <p>3.Quick clicks on the right answer to score higher! </p>`;
+                // rulesHTML += '<button onclick="changeScreen2(\'game2.html\')">Game 2</button>';
+                button1.onclick = function() {
+                    quiz1Screen('quiz/quiz2.html');
+        };
+            }else if (selectedGame === 'game3') {
+                rulesHTML += `<p>1.You have to answer 3 questions</p>
+                <p>2.Each question will end in 15 Secs</p>
+                <p>3.Quick clicks on the right answer to score higher! </p>`;
+                // rulesHTML += '<button onclick="changeScreen3(\'game3.html\')">Game 3</button>';
+                button1.onclick = function() {
+                    quiz1Screen('quiz/quiz3.html');
+        };
+            }else if (selectedGame === 'game4') {
+                rulesHTML += `<p>1.You have to answer 3 questions</p>
+                <p>2.Each question will end in 15 Secs</p>
+                <p>3.Quick clicks on the right answer to score higher! </p>`;
+                // rulesHTML += '<button onclick="changeScreen4(\'game4.html\')">Game 4</button>';
+                button1.onclick = function() {
+                    quiz1Screen('quiz/quiz4.html');
+        };
+            }
+             else {
+                rulesHTML += '<p>No rules available for the selected game.</p>';
+            }
+
+            // Set the concatenated HTML string to the container
+            rulesContainer.innerHTML = rulesHTML;
+        }
+
+    </script>
+
+</head>
+
+<body onload="displayRules()">
+    
+    <div id="main2">
+        <div >
+        <!-- <img class="calpolalign" src="./img/calpol-01.webp" alt=""> -->
+                    <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+                </div>
+        <div class="rulesbg">
+            <div class="rulesDiv">
+                <h1>Quiz Rules</h1>
+                <div id="rulesContainer"></div>
+            </div>
+            <div class="rulesbtn">
+                <!-- <button class="startbtn"  onclick="location.href='firstgamequiz1.html'">Start Quiz</button> -->
+        </div>
+        </div>
+    </div>
+
+</body>
+
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const userListElement = document.getElementById('userList');
+
+  socket.on('login', (data) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = `${data.username} logged in`;
+    userListElement.appendChild(listItem);
+  });
+
+  // Function to change the screen for connected clients
+  function quiz1Screen(screen) {
+    // Emit the "changeScreen" event to the server
+    socket.emit('quiz1Screen', screen);
+    localStorage.setItem('quiz1Screen', screen);
+
+
+    if (screen === 'quiz/quiz1.html') {
+        window.location.href = 'quiz1.html';
+    }
+    else if (screen === 'quiz/quiz2.html') 
+    {
+        window.location.href = 'quiz2.html';
+    }
+    else if (screen === 'quiz/quiz3.html') 
+    {
+        window.location.href = 'quiz3.html';
+    }
+    else if (screen === 'quiz/quiz4.html') {
+        window.location.href = 'quiz4.html';
+    }
+    else{ console.log("error!!!!!!!!!!!!!")}
+    
+  }
+
+  // Function to change the screen for connected clients
+//   function quiz2Screen(screen2) {
+//     // Emit the "changeScreen" event to the server
+//     socket.emit('quiz2Screen', screen2);
+//     localStorage.setItem('quiz2Screen', screen2);
+//     window.location.href = 'quiz2.html';
+//   }
+
+//   // Function to change the screen for connected clients
+//   function changeScreen3(screen3) {
+//     // Emit the "changeScreen" event to the server
+//     socket.emit('changeScreen3', screen3);
+//     localStorage.setItem('gamescreen', screen);
+//     window.location.href = 'gamepic.html';
+//   }
+
+//   // Function to change the screen for connected clients
+//   function changeScreen4(screen4) {
+//     // Emit the "changeScreen" event to the server
+//     socket.emit('changeScreen4', screen4);
+//     localStorage.setItem('gamescreen', screen);
+//     window.location.href = 'gamepic.html';
+//   }
+
+//   // Function to change the screen for connected clients
+//   function changeScreen5(screen5) {
+//     // Emit the "changeScreen" event to the server
+//     socket.emit('changeScreen5', screen5);
+//     localStorage.setItem('gamescreen', screen);
+//     window.location.href = 'gamepic.html';
+//   }
+</script>
+
+
+</html>

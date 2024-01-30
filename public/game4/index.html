@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Puzzle Game</title>
+    <link rel="stylesheet" href="../game1/style.css" />
+    <link rel="stylesheet" href="../game1/puzzle.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="../firebase-config.js"></script>
+
+
+    <style>
+        #puzzle-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            /* grid-gap: 5px; */
+        }
+        .puzzle-piece {
+            width: 100px;
+            height: 100px;
+            border: 1px solid #333;
+            background-image: url('mix2FixPic.webp'); /* Replace with your actual image path */
+            background-size: 300px 300px; /* Adjust based on your sprite sheet size */
+            cursor: pointer;
+            transition: border 0.3s ease-in-out;
+        }
+        .selected {
+            border: 2px solid #ffffff; /* Highlight selected piece */
+        }
+        #message {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    </style>
+    <script>
+          // Retrieve the username from localStorage     
+  var username = localStorage.getItem('username');
+        // Attach the startGame function to the onload event
+        window.onload = function() {
+
+        var username_container = document.getElementById('username_container');
+        var userrecord_HTML = '';
+
+        if (username) {
+        // Display the username or use it as needed in your game logic
+        console.log('Username:', username);
+        // You can also update the DOM to show the username if necessary
+        userrecord_HTML += '<p>Welcome, ' + username + '!</p>';
+        // document.body.innerHTML += '<p>Welcome, ' + username + '!</p>';
+        } else {
+        // Redirect to the login page if the username is not found in localStorage
+        username_container += '<p> no user found in localstorage</p>';
+        console.log("no user found!")
+        }
+        // Set the concatenated HTML string to the container
+        // username_container.innerHTML = userrecord_HTML;
+}
+</script>
+
+</head>
+<body  class='puzzlebackground'>
+
+    <!-- <h1>Welcome to 2nd Game</h1> -->
+  <div class='timeralign'>
+        
+    <div id="game-timer"> 
+        <div id="outer-circle">           
+            <div class="timer" id="timer"></div>
+        </div> 
+    </div>
+</div>
+<div class="wrapper1">
+            <div class="submitBtnAlign">
+                <button id="nextToQuizBtn">Submit Score</button>
+            </div>
+        <div id="puzzle-board"></div>
+        <div id="message"></div>
+
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+    $(document).ready(function() {
+        var solution = [
+            { top: 0, left: 0 },
+            { top: 0, left: -100 },
+            { top: 0, left: -200 },
+            { top: -100, left: 0 },
+            { top: -100, left: -100 },
+            { top: -100, left: -200 },
+            { top: -200, left: 0 },
+            { top: -200, left: -100 },
+            { top: -200, left: -200 },
+            null
+        ];
+
+        var board = $.extend(true, [], solution);
+        var selectedPieceIndex = null;
+
+        function initGame() {
+            randomizeBoard();
+            $("#nextToQuizBtn").hide();
+            renderBoard();
+            $("#puzzle-board").on("click", ".puzzle-piece", movePiece);
+          
+        }
+
+        function renderBoard() {
+            var $puzzleBoard = $("#puzzle-board");
+            $puzzleBoard.empty();
+
+            for (var i = 0; i < 3; i++) {
+                for (var j = 0; j < 3; j++) {
+                    var piece = board[i * 3 + j];
+                    var $piece = $("<div>").addClass("puzzle-piece");
+
+                    if (piece !== null) {
+                        $piece.css("background-position", piece.left + "px " + piece.top + "px");
+                    }
+
+                    $puzzleBoard.append($piece);
+                }
+            }
+        }
+
+        function randomizeBoard() {
+            for (var i = 7; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+
+                // Avoid repeating the first piece
+                if (i === 7) {
+                    j = Math.floor(Math.random() * 8);
+                }
+
+                var temp = board[i];
+                board[i] = board[j];
+                board[j] = temp;
+            }
+        }
+
+        function movePiece(event) {
+            var $piece = $(event.target);
+            var currentIndex = $(".puzzle-piece").index($piece);
+
+            if (selectedPieceIndex === null && $piece.hasClass("puzzle-piece")) {
+                // First click - select the piece
+                selectedPieceIndex = currentIndex;
+                $piece.addClass("selected");
+            } else if (selectedPieceIndex !== null && $piece.hasClass("puzzle-piece")) {
+                // Second click - swap the pieces
+                var temp = board[currentIndex];
+                board[currentIndex] = board[selectedPieceIndex];
+                board[selectedPieceIndex] = temp;
+
+                // Reset selection
+                $(".puzzle-piece").removeClass("selected");
+                selectedPieceIndex = null;
+
+                renderBoard();
+
+                // Check for a win after each move
+                if (isWinner()) {
+                    
+                    $("#nextToQuizBtn").show();
+
+                }
+            }
+        }
+
+       
+
+        function isWinner() {
+            for (var i = 0; i < 8; i++) {
+                if (board[i] === null || solution[i] === null) {
+                    continue;
+                }
+                if (board[i].top !== solution[i].top || board[i].left !== solution[i].left) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        initGame();
+    });
+</script>
+<script>
+    
+    var seconds1 = 40;
+            var timerElement = document.getElementById('timer');
+            var outerCircle = document.getElementById('outer-circle');
+    
+            function updateTimer() {
+                timerElement.textContent = '' + seconds1;
+    
+                // Change color based on remaining time
+                if (seconds1 <= 10) {
+                    timerElement.style.color = 'red';
+                    outerCircle.classList.add('highlight');
+                    setTimeout(() => outerCircle.classList.remove('highlight'), 500); // Remove highlight after 0.5s
+                }
+    
+                seconds1--;
+    
+                if (seconds1 < 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = 'Time\'s up!';
+
+
+                    // window.location.href = '../../wait.html';
+                    
+                }
+            }
+    
+            var timerInterval = setInterval(updateTimer, 1000);
+    
+            // Function to handle the "Next to quiz" button click
+            const database = firebase.database(); // Declare database here
+            const socket = io();
+    
+            document.getElementById('nextToQuizBtn').addEventListener('click', async () => {
+
+var timerValue = seconds1;
+var game2_timerValue;  // Declare game2_timerValue outside the loop
+
+// Check if the username already exists in the database
+const userRef = database.ref('User_Details');
+const snapshot = await userRef.orderByChild('username').equalTo(username).once('value');
+
+if (snapshot.exists()) {
+    // Update points and timerValue for the found user
+    snapshot.forEach((childSnapshot) => {
+        const userId = childSnapshot.key;
+        const userData = childSnapshot.val();
+
+        // Ensure that userData.game2_points is a valid number
+        var get_points = isNaN(userData.game2_points) ? 10 : userData.game2_points + 10;
+
+        game2_timerValue = timerValue;  // Assign timerValue to game2_timerValue
+
+        const updatedData = {
+            game2_points: get_points,
+            game2_timerValue: game2_timerValue,
+            game2_total_value: get_points + game2_timerValue
+        };
+
+        userRef.child(userId).update(updatedData);
+
+        console.log("Data updated in Firebase:", updatedData);
+        // Emit the login event through Socket.IO
+        socket.emit('quiz', { username });
+
+        // Redirect to 'wait.html'
+        window.location.href = '../../wait.html';
+    });
+
+} else {
+    console.log('User not found');
+    // Handle the case where the username does not exist
+
+    // Create a new user node with the specified username
+    const newUser = {
+        username: username,
+        game2_points: 10,  // Initial points for a new user
+        game2_timerValue: timerValue,
+        game2_total_value: 10 + timerValue
+    };
+
+    // Push the new user data to the database
+    const newUserRef = userRef.push(newUser);
+
+    console.log("New user added to Firebase:", newUser);
+    // Emit the login event through Socket.IO
+    socket.emit('quiz', { username });
+
+    // Redirect to 'wait.html'
+    window.location.href = '../../wait.html';
+}
+});
+
+
+        socket.on('quiz', (data) => {
+              console.log(`${data.username} logged in to quiz`);
+            }); 
+    
+    </script>
+
+
+</body>
+</html>

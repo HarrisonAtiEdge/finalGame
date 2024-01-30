@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memory Game</title>
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css"/>
+    <link rel="stylesheet" href="puzzle.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
+   
+    <script>
+  // Retrieve the username from localStorage     
+  var username = localStorage.getItem('username');
+        // Attach the startGame function to the onload event
+        window.onload = function() {
+
+        
+     
+
+var username_container = document.getElementById('username_container');
+var userrecord_HTML = '';
+
+if (username) {
+  // Display the username or use it as needed in your game logic
+  console.log('Username:', username);
+  // You can also update the DOM to show the username if necessary
+  userrecord_HTML += '<p>Welcome, ' + username + '!</p>';
+  // document.body.innerHTML += '<p>Welcome, ' + username + '!</p>';
+} else {
+  // Redirect to the login page if the username is not found in localStorage
+  username_container += '<p> no user found in localstorage</p>';
+}
+// Set the concatenated HTML string to the container
+username_container.innerHTML = userrecord_HTML;
+
+        movesCount = 0;
+        seconds = 0;
+        minutes = 0;
+        //controls amd buttons visibility
+        controls.classList.add("hide");
+        stopButton.classList.remove("hide");
+        startButton.classList.add("hide");
+        //Start timer
+        interval = setInterval(timeGenerator, 1000);
+        //initial moves
+        moves.innerHTML = `<span>Moves:</span> ${movesCount}`;
+
+        result.innerText = "";
+        winCount = 0;
+        let cardValues = generateRandom();
+        console.log(cardValues);
+        matrixGenerator(cardValues);
+        };
+
+    </script>
+    <style>
+      p{color: black;}
+      
+      #username_container{
+        display: none;
+      }
+    </style>
+
+  </head>
+  <body class='puzzlebackground'>
+
+    <!-- <h1>Welcome to Game 1</h1> -->
+    <div id="username_container"></div>
+
+  <audio id="matchSound" src="eventbutton.mp3"></audio>
+  <audio id="successSound" src="success.mp3"></audio>
+
+  <div class='timeralign'>
+        
+        <div id="game-timer"> 
+            <div id="outer-circle">           
+                <div class="timer" id="timer" ></div>
+            </div> 
+        </div>
+    </div>
+
+    <div class="wrapper">
+      <div class="stats-container">
+        <div id="moves-count"></div>
+        <div class='nextbtn'>
+       
+        <button id="nextToQuizBtn" >Submit Score</button>
+        
+        </div>
+        <div id="time"></div>
+      </div>
+      <div class="game-container"></div>
+      <div id="stop" class="hide"></div>
+    </div>
+    <div class="controls-container">
+      <p id="result"></p>
+      <button id="start">Start Game</button>
+    </div>
+  
+
+    <!-- Script -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+    <script>
+    
+var seconds1 = 30;
+        var timerElement = document.getElementById('timer');
+        var outerCircle = document.getElementById('outer-circle');
+
+        function updateTimer() {
+            timerElement.textContent = '' + seconds1;
+
+            // Change color based on remaining time
+            if (seconds1 <= 10) {
+                timerElement.style.color = 'red';
+                outerCircle.classList.add('highlight');
+                setTimeout(() => outerCircle.classList.remove('highlight'), 500); // Remove highlight after 0.5s
+            }
+
+            seconds1--;
+
+            if (seconds1 < 0) {
+                clearInterval(timerInterval);
+                timerElement.textContent = 'Time\'s up!';
+                // window.location.href = 'wait.html';
+                
+            }
+        }
+
+        var timerInterval = setInterval(updateTimer, 1000);
+
+        // Function to handle the "Next to quiz" button click
+        const database = firebase.database(); // Declare database here
+        const socket = io();
+
+        document.getElementById('nextToQuizBtn').addEventListener('click', async () => {
+
+        var timerValue = seconds1;
+        var game1_timerValue;  // Declare game1_timerValue outside the loop
+
+        // Check if the username already exists in the database
+        const userRef = database.ref('User_Details');
+        const snapshot = await userRef.orderByChild('username').equalTo(username).once('value');
+
+        if (snapshot.exists()) {
+          // Update points and timerValue for the found user
+          snapshot.forEach((childSnapshot) => {
+            const userId = childSnapshot.key;
+            const userData = childSnapshot.val();
+            var get_points = userData.points + 10;  // Use userData.points instead of undefined variable
+
+            game1_timerValue = timerValue;  // Assign timerValue to game1_timerValue
+
+            const updatedData = {
+              points: get_points,
+              game1_timerValue: game1_timerValue,
+              total_value: get_points + game1_timerValue
+            };
+
+            userRef.child(userId).update(updatedData);
+
+            console.log("Data updated in Firebase:", updatedData);
+            // Emit the login event through Socket.IO
+            socket.emit('quiz', { username });
+
+            // Redirect to 'wait.html'
+            window.location.href = '../../wait.html';
+          });
+
+        } else {
+          console.log('User not found');
+          // Handle the case where the username does not exist
+        }
+        });
+
+    socket.on('quiz', (data) => {
+          console.log(`${data.username} logged in to quiz`);
+        }); 
+
+</script>
+<script>
+   // Function to play the match sound
+function playMatchSound() {
+    const matchSound = document.getElementById("matchSound");
+    matchSound.play();
+}
+
+// Function to play the play success sound
+function playSuccessSound() {
+    const matchSound = document.getElementById("successSound");
+    matchSound.play();
+}
+</script>
+
+
+  </div>
+ 
+  </body>
+
+</html>

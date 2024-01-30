@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Third Player</title>
+  <link rel="stylesheet" href="./css/result.css">
+  
+  <style>
+
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+    @import url('https://fonts.googleapis.com/css?family=Roboto:700');
+    @import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap');
+  
+      *{
+        font-family: 'Racing Sans One', sans-serif;
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+      }
+    
+      #playerName {
+  font-family: 'Racing Sans One', sans-serif;
+  padding: 6vw; 
+  font-size: 2vw;
+  
+}
+
+
+#flip > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.btn{
+    padding: 20px 30px;
+    background-color:  #d2250f;
+    border: none;
+    border-radius: 14px;
+    font-weight: 400;
+    font-size: 1vw;
+    cursor: pointer;
+    color: white;
+    background: rgb(127,16,12);
+    background: linear-gradient(90deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+}
+.btn:hover{
+      background-color:  rgb(107, 0, 0);
+}
+
+body {
+  font-family: 'Racing Sans One', sans-serif;
+  margin:0px;
+  font-family:'Roboto';
+  text-align:center;
+}
+
+#container {
+  color:#999;
+  text-transform: uppercase;
+  font-size:36px;
+  font-weight:bold;
+  padding-top:200px;  
+  position:fixed;
+
+}
+
+#flip {
+  height:auto;
+  overflow:hidden;
+}
+
+#flip > div > div {
+  color:#fff;
+  padding:4px 12px;
+  height:45px;
+  margin-bottom:45px;
+  display:inline-block;
+}
+
+#flip div:first-child {
+  animation: show 5s linear ;
+}
+
+#flip div div {
+   background:rgb(96, 1, 1);
+   padding: 2vw;
+    font-size: 4vw;
+    border-radius: 1vw;
+   
+  
+}
+
+@keyframes show {
+  0% {margin-top:-270px;}
+  5% {margin-top:-180px;}
+  33% {margin-top:-180px;}
+  38% {margin-top:-90px;}
+  66% {margin-top:-90px;}
+  71% {margin-top:0px;}
+  99.99% {margin-top:0px;}
+  100% {margin-top:-270px;}
+}
+
+p {
+  position:fixed;
+  width:100%;
+  bottom:30px;
+  font-size:12px;
+  color:#999;
+  margin-top:200px;
+}
+
+
+
+.center h1 {
+    color: #ffffff;
+    padding: 15px 30px;
+ 
+    width: 300px;
+    transform: skew(1deg);
+    position: relative;
+    border-radius: var(--border-width);
+    --border-width: 3px;
+}
+
+.center h1::after { position: absolute;
+    content: "";
+    top: calc(-1 * var(--border-width));
+    left: calc(-1 * var(--border-width));
+    z-index: -1;
+    width: calc(100% + var(--border-width) * 2);
+    height: calc(100% + var(--border-width) * 2);
+    background: linear-gradient(
+      60deg,
+      hsl(0, 100%, 25%),
+      hsl(0, 100%, 25%),
+       hsl(0, 98%, 19%),
+      hsl(0, 98%, 20%),
+      hsl(333, 49%, 71%),
+      hsl(0, 97%, 15%),
+      hsl(0, 98%, 22%),
+      hsl(0, 100%, 25%),
+      hsl(0, 100%, 25%)
+    );
+    background-size: 300% 300%;
+    background-position: 0 50%;
+    border-radius: calc(2 * var(--border-width));
+    animation: moveGradient 4s alternate infinite;
+  }
+  
+  @keyframes moveGradient {
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  #playerName{
+    font-family:  'Racing Sans One', sans-serif;
+    padding: 1vw;
+  }
+
+  #main2 button {
+    margin-top: 32vw;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </style>
+</head>
+<body>
+  <div id="main2">
+    <div id="nav">
+        <!-- <img class="calpolalign" src="./img/calpol-01.webp" alt=""> -->
+        <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+      </div>
+      <div class="center">
+    <h1>Third Postion</h1>
+
+    <!-- new code -->
+    <div id=container >
+      
+      <div id=flip>
+        
+        <div><div id="playerName"></div></div>
+        
+      </div>
+      
+    </div>
+    
+    <!-- new code -->
+    
+     <!-- new code -->
+     <!-- <div id=container >
+      
+      <div id=flip>
+        
+        <div><div id="playerName2"></div></div>
+        
+      </div>
+      
+    </div> -->
+
+</div>
+<button class="btn" onclick="resultScreen()">Next</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+ // Initialize Firebase with your config
+
+ const database = firebase.database();
+  const userRef = database.ref('User_Details');
+
+  // Function to find the third highest user
+  function findThirdHighest(totalValueField) {
+    userRef.once('value')
+      .then(snapshot => {
+        let highestUser = null;
+        let secondHighestUser = null;
+        let thirdHighestUser = null;
+        let highestTotalValue = 0;
+        let secondHighestTotalValue = 0;
+        let thirdHighestTotalValue = 0;
+
+        // Loop through all nodes to find the users with the highest, second-highest, and third-highest total_value
+        snapshot.forEach(childSnapshot => {
+          const user = childSnapshot.val();
+          const totalValue = user[totalValueField]; // Access the total value based on the field name provided
+          
+
+
+          if (totalValue > highestTotalValue) {
+            // Move current highest to second highest, and second highest to third highest
+            thirdHighestUser = secondHighestUser;
+            thirdHighestTotalValue = secondHighestTotalValue;
+
+            secondHighestUser = highestUser;
+            secondHighestTotalValue = highestTotalValue;
+
+            // Set the new highest
+            highestUser = user;
+            highestTotalValue = totalValue;
+          } else if (totalValue > secondHighestTotalValue) {
+            // Move current second highest to third highest
+            thirdHighestUser = secondHighestUser;
+            thirdHighestTotalValue = secondHighestTotalValue;
+
+            // Set the new second highest
+            secondHighestUser = user;
+            secondHighestTotalValue = totalValue;
+          } else if (totalValue > thirdHighestTotalValue) {
+            // Set the new third highest
+            thirdHighestUser = user;
+            thirdHighestTotalValue = totalValue;
+          }
+        });
+
+        // Update the HTML table with the details of the third-highest user
+        if (thirdHighestUser) {
+          console.log(thirdHighestUser.username);
+          var playerName =   document.getElementById('playerName') ;
+          playerName.innerHTML =`${thirdHighestUser.username}`;
+        } else {
+          console.error('No users found');
+        }
+      })
+      .catch(error => {
+        console.error('Error retrieving data:', error);
+      });
+  }
+
+   
+    var selectedGame = localStorage.getItem('selectedGame');
+
+        if (selectedGame==="game1") {
+           // Call the function with the desired total value field name
+            findThirdHighest("total_value"); 
+        }
+        else if (selectedGame==="game2") {
+            findThirdHighest("game2_total_value");
+        }
+        else if (selectedGame==="game3") {
+            findThirdHighest("game3_total_value");
+        }
+        else if (selectedGame==="game4") {
+            findThirdHighest("game4_total_value");
+        }
+        else{
+          
+          document.getElementById('playerName').innerHTML = "select game first";
+        }
+
+
+        function resultScreen() {
+        window.location.href='second.html';
+    }
+</script>
+
+</body>
+</html>

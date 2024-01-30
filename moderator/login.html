@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login</title>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        body {
+            background-image: url(./img/Calpol_Bg.webp);
+            width: 100%;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            /* background-color: #f4f4f4; */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        form {
+            background: rgba(92, 0, 0, 0.25);
+    /* box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    backdrop-filter: blur(3.5px);
+    -webkit-backdrop-filter: blur(3.5px);
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.18); */
+            padding: 20px;
+            border-radius: 8px;
+           
+            width: 300px;
+        }
+        label {
+           font-family: 'Cambria';
+           font-size: 1vw;
+           font-weight: 100;
+            color: #fff;
+            display: block;
+            margin-bottom: 8px;
+        }
+        input {
+            border: none;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+            box-sizing: border-box;
+        }
+        button {
+            font-family: 'Cambria';
+           font-size: 1vw;
+           font-weight: 100;
+            background-color: #3e0202;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <form id="loginForm">
+        <label for="admin_name">Admin Name</label>
+        <input type="text" id="admin_name" name="admin_name" required>
+
+        <label for="organizer_name">Organizer Name</label>
+        <input type="text" id="organizer_name" name="organizer_name" required>
+
+        <label for="city_name">City Name</label>
+        <input type="text" id="city_name" name="city_name" required>
+
+        <!-- <label for="current_datetime">Current Datetime:</label> -->
+        <input type="hidden" id="current_datetime" name="current_datetime" value="" readonly>
+
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <script>
+        function submitForm() {
+            var database = firebase.database();
+    
+            // Get values from the form
+            var adminName = document.getElementById("admin_name").value;
+            var organizerName = document.getElementById("organizer_name").value;
+            var cityName = document.getElementById("city_name").value;
+    
+            // Get current datetime
+            var currentDatetime = new Date();
+            var formattedDatetime = currentDatetime.toLocaleString();
+    
+            // Display the current datetime
+            document.getElementById("current_datetime").value = formattedDatetime;
+    
+            // Save data to Firebase
+            var data = {
+                adminName: adminName,
+                organizerName: organizerName,
+                cityName: cityName,
+                currentDatetime: formattedDatetime
+            };
+    
+            // Push data to Firebase database
+            database.ref('Admin_details').push(data)
+                .then(function() {
+                    console.log("Data added to Firebase:", data);
+                    window.location.href = 'gamepage.html'; // Redirect on success
+                })
+                .catch(function(error) {
+                    console.error("Error adding data to Firebase:", error);
+                    alert("Failed to add data to Firebase. Please try again."); // Show error message
+                });
+        }
+    </script>
+
+</body>
+</html>

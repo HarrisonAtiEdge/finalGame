@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../game1/style.css" />
+  <link rel="stylesheet" href="../game1/puzzle.css" />
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+  <script src="../firebase-config.js"></script>
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      background-image: url('../../moderator/img/Calpol_Bg.webp');
+        background-color: #F7D8D5;
+      font-family: 'Arial', sans-serif;
+  
+      height: 100vh;
+      margin: 0;
+      color: #382723;
+    }
+    #outcome {
+      margin-bottom: 20px;
+      font-size: 18px;
+      color: white;
+    }
+    #board {
+   
+    
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-gap: 5px;
+    }
+    .cell {
+      color: white;
+      width: 100px;
+      height: 100px;
+      background-color: #5f0800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 100;
+      font-size: 2.2vw;
+      cursor: pointer;
+      border: 1px solid #7d3333;
+    }
+
+    @media only screen and (min-width: 320px) and (max-width: 425px)  {
+      .cell {
+        font-size: 11vw;
+      }
+    }
+  </style>
+
+  <script>
+    // Retrieve the username from localStorage     
+    var username = localStorage.getItem('username');
+      // Attach the startGame function to the onload event
+      window.onload = function() {
+
+      var username_container = document.getElementById('username_container');
+      var userrecord_HTML = '';
+
+      if (username) {
+      // Display the username or use it as needed in your game logic
+      console.log('Username:', username);
+      // You can also update the DOM to show the username if necessary
+      userrecord_HTML += '<p>Welcome, ' + username + '!</p>';
+      // document.body.innerHTML += '<p>Welcome, ' + username + '!</p>';
+      } else {
+      // Redirect to the login page if the username is not found in localStorage
+      username_container += '<p> no user found in localstorage</p>';
+      console.log("no user found!")
+      }
+      // Set the concatenated HTML string to the container
+      // username_container.innerHTML = userrecord_HTML;
+    }
+</script>
+
+</head>
+<body>
+
+   
+  <div class='timeralign'>
+        
+    <div id="game-timer"> 
+        <div id="outer-circle">           
+            <div class="timer" id="timer"></div>
+        </div> 
+    </div>
+  </div>  
+  <div class="wrapper1">
+    <div class="submitBtnAlign">
+      <button id="nextToQuizBtn">Submit Score</button>
+      <button onclick="gotoWait();" id="nextToQuizBtn2">Submit Score</button>
+</div>
+<div id="outcome"></div>
+<div id="board"></div>
+
+    
+</div>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+document.getElementById("nextToQuizBtn").style.display = 'none';
+document.getElementById("nextToQuizBtn2").style.display = 'none';
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const board = document.getElementById("board");
+    const outcome = document.getElementById("outcome");
+    const cells = [];
+    let currentPlayer = "X";
+    let gameOver = false;
+
+    // Create the Tic Tac Toe board
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        const cell = document.createElement("div");
+        cell.className = "cell";
+        cell.dataset.row = i;
+        cell.dataset.col = j;
+        cell.addEventListener("click", handleCellClick);
+        cells.push(cell);
+        board.appendChild(cell);
+      }
+    }
+
+    // Handle cell click
+    function handleCellClick(event) {
+      if (gameOver || event.target.textContent !== "") return;
+
+      // Player's move
+      event.target.textContent = currentPlayer;
+      if (checkWinner()) {
+        nextscreen2("Congratulations! you won🎉🎉");
+        gameOver = true;
+        return;
+      }
+
+      // Check for a tie
+      if (cells.every(cell => cell.textContent !== "")) {
+        displayOutcome("It's a tie!");
+        
+        gameOver = true;
+        return;
+      }
+
+      // Computer's move
+      setTimeout(computerMove, 500);
+    }
+
+    // Computer's move (random)
+    function computerMove() {
+      if (gameOver) return;
+
+      let emptyCells = cells.filter(cell => cell.textContent === "");
+      if (emptyCells.length === 0) return;
+
+      const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+      randomCell.textContent = "O";
+
+      if (checkWinner()) {
+        displayOutcome("You've lost☹");
+        gameOver = true;
+        return;
+      }
+    }
+
+    // Check for a winner
+    function checkWinner() {
+      const winningCombinations = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+        [0, 4, 8], [2, 4, 6]             // Diagonals
+      ];
+
+      for (const combination of winningCombinations) {
+        const [a, b, c] = combination;
+        if (
+          cells[a].textContent !== "" &&
+          cells[a].textContent === cells[b].textContent &&
+          cells[a].textContent === cells[c].textContent
+        ) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    // Display outcome above the board
+    function displayOutcome(message) {
+      outcome.textContent = message;
+
+   let btn2 = document.getElementById("nextToQuizBtn2").style.display = 'block';
+      // window.location.href = '../../wait.html';
+    }
+  });
+
+  function nextscreen2(message) {
+    outcome.textContent = message;
+    document.getElementById("nextToQuizBtn").style.display = 'block';
+
+  }
+
+  function gotoWait(){
+    window.location.href = '../../wait.html';
+  }
+</script>
+
+<script>
+  //Database script.......
+  var seconds1 = 15;
+          var timerElement = document.getElementById('timer');
+          var outerCircle = document.getElementById('outer-circle');
+  
+          function updateTimer() {
+              timerElement.textContent = '' + seconds1;
+  
+              // Change color based on remaining time
+              if (seconds1 <= 60 && seconds1 > 50) {
+                  timerElement.style.color = 'orange';
+              } else if (seconds1 <= 50 && seconds1 > 40) {
+                  timerElement.style.color = 'skyblue';
+              }else if (seconds1 <= 40 && seconds1 > 30) {
+                  timerElement.style.color = 'brown';
+              }else if (seconds1 <= 30 && seconds1 > 20) {
+                  timerElement.style.color = 'purple';
+              }
+               else if (seconds1 <= 10) {
+                  timerElement.style.color = 'red';
+                  outerCircle.classList.add('highlight');
+                  setTimeout(() => outerCircle.classList.remove('highlight'), 500); // Remove highlight after 0.5s
+              }
+  
+              seconds1--;
+  
+              if (seconds1 < 0) {
+                  clearInterval(timerInterval);
+                  timerElement.textContent = 'Time\'s up!';
+                  // window.location.href = 'wait.html';
+                  
+              }
+          }
+  
+          var timerInterval = setInterval(updateTimer, 1000);
+  
+          // Function to handle the "Next to quiz" button click
+          const database = firebase.database(); // Declare database here
+          const socket = io();
+  
+          document.getElementById('nextToQuizBtn').addEventListener('click', async () => {
+
+var timerValue = seconds1;
+var game3_timerValue;  // Declare game3_timerValue outside the loop
+
+// Check if the username already exists in the database
+const userRef = database.ref('User_Details');
+const snapshot = await userRef.orderByChild('username').equalTo(username).once('value');
+
+if (snapshot.exists()) {
+  // Update points and timerValue for the found user
+  snapshot.forEach((childSnapshot) => {
+      const userId = childSnapshot.key;
+      const userData = childSnapshot.val();
+
+      // Ensure that userData.game3_points is a valid number
+      var get_points = isNaN(userData.game3_points) ? 10 : userData.game3_points + 10;
+
+      game3_timerValue = timerValue;  // Assign timerValue to game3_timerValue
+
+      const updatedData = {
+          game3_points: get_points,
+          game3_timerValue: game3_timerValue,
+          game3_total_value: get_points + game3_timerValue
+      };
+
+      userRef.child(userId).update(updatedData);
+
+      console.log("Data updated in Firebase:", updatedData);
+      // Emit the login event through Socket.IO
+      socket.emit('quiz', { username });
+
+      // Redirect to 'wait.html'
+      window.location.href = '../../wait.html';
+  });
+
+} else {
+  console.log('User not found');
+  // Handle the case where the username does not exist
+
+  // Create a new user node with the specified username
+  const newUser = {
+      username: username,
+      game3_points: 10,  // Initial points for a new user
+      game3_timerValue: timerValue,
+      game2_total_value: 10 + timerValue
+  };
+
+  // Push the new user data to the database
+  const newUserRef = userRef.push(newUser);
+
+  console.log("New user added to Firebase:", newUser);
+  // Emit the login event through Socket.IO
+  socket.emit('quiz', { username });
+
+  // Redirect to 'wait.html'
+  window.location.href = '../../wait.html';
+}
+});
+
+
+      socket.on('quiz', (data) => {
+            console.log(`${data.username} logged in to quiz`);
+          }); 
+  
+  </script>
+
+
+</body>
+</html>

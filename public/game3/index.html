@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Archery Game</title>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="../game1/style.css" />
+  <link rel="stylesheet" href="../game1/puzzle.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+  <script src="../firebase-config.js"></script>
+</head>
+
+<script>
+  // Retrieve the username from localStorage     
+var username = localStorage.getItem('username');
+
+// Attach the startGame function to the onload event
+window.onload = function() {
+
+var username_container = document.getElementById('username_container');
+var userrecord_HTML = '';
+
+if (username) {
+// Display the username or use it as needed in your game logic
+console.log('Username:', username);
+// You can also update the DOM to show the username if necessary
+userrecord_HTML += '<p>Welcome, ' + username + '!</p>';
+// document.body.innerHTML += '<p>Welcome, ' + username + '!</p>';
+} else {
+// Redirect to the login page if the username is not found in localStorage
+username_container += '<p> no user found in localstorage</p>';
+console.log("no user found!");
+}
+// Set the concatenated HTML string to the container
+// username_container.innerHTML = userrecord_HTML;
+}
+</script>
+
+<body class='puzzlebackground'>
+
+  <div class='timeralign'>
+        
+    <div id="game-timer"> 
+        <div id="outer-circle">           
+            <div class="timer" id="timer" >
+               <div class="remainingTime"></div>
+              </div>
+        </div> 
+    </div>
+</div>
+
+
+
+<div class="targetParent">
+    <div class="target">
+      <div class="circle1" data-label="6"></div>
+      <div class="circle2" data-label="0"></div>
+      <div class="circle3" data-label="0"></div>
+      <div class="circle4" data-label="0"></div>
+      <div class="circle5" data-label="0"></div>
+    </div>
+</div>
+  <div class="infos">
+    <div class="score">0 point</div>
+
+    <!-- <div class="restart">Restart</div>
+    <div class="hardMode">Hard mode</div> -->
+  </div>
+ <div class="submitBtnAlign">
+  <button id="nextToQuizBtn">Submit Score</button>
+</div>
+
+  <script src="script.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+
+// Function to handle the "Next to quiz" button click
+const database = firebase.database(); // Declare database here
+            const socket = io();
+    
+            document.getElementById('nextToQuizBtn').addEventListener('click', async () => {
+
+// var timerValue = seconds1;
+var game3_timerValue = global_score;  // Declare game3_timerValue outside the loop
+
+// Check if the username already exists in the database
+const userRef = database.ref('User_Details');
+const snapshot = await userRef.orderByChild('username').equalTo(username).once('value');
+
+if (snapshot.exists()) {
+    // Update points and timerValue for the found user
+    snapshot.forEach((childSnapshot) => {
+        const userId = childSnapshot.key;
+        const userData = childSnapshot.val();
+
+        // Ensure that userData.game2_points is a valid number
+        var get_points = isNaN(userData.game3_points) ? 10 : userData.game3_points + 10;
+
+        // game3_timerValue = timerValue;  // Assign timerValue to game3_timerValue
+
+        const updatedData = {
+            game3_points: get_points,
+            game3_timerValue: game3_timerValue,
+            game3_total_value: get_points + game3_timerValue
+        };
+
+        userRef.child(userId).update(updatedData);
+
+        console.log("Data updated in Firebase:", updatedData);
+        // Emit the login event through Socket.IO
+        socket.emit('quiz', { username });
+
+        // Redirect to 'wait.html'
+        window.location.href = '../../wait.html';
+    });
+
+} else {
+    console.log('User not found');
+    // Handle the case where the username does not exist
+
+    // Create a new user node with the specified username
+    const newUser = {
+        username: username,
+        game3_points: 10,  // Initial points for a new user
+        game3_timerValue: game3_timerValue,
+        game3_total_value: 10 + game3_timerValue
+    };
+
+    // Push the new user data to the database
+    const newUserRef = userRef.push(newUser);
+
+    console.log("New user added to Firebase:", newUser);
+    // Emit the login event through Socket.IO
+    socket.emit('quiz', { username });
+
+    // Redirect to 'wait.html'
+    window.location.href = '../../wait.html';
+}
+});
+
+
+        socket.on('quiz', (data) => {
+              console.log(`${data.username} logged in to quiz`);
+            }); 
+    
+
+
+  </script>
+
+</body>
+</html>

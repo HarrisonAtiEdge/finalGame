@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/result.css">
+  
+  <title>1st Player</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+    @import url('https://fonts.googleapis.com/css?family=Roboto:700');
+    @import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap');
+  
+      *{
+        font-family: 'Racing Sans One', sans-serif;
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+      }
+    
+      #playerName {
+  font-family: 'Racing Sans One', sans-serif;
+  padding: 6vw; 
+  font-size: 2vw;
+  
+}
+
+
+#flip > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+
+body {
+  font-family: 'Racing Sans One', sans-serif;
+  margin:0px;
+  font-family:'Roboto';
+  text-align:center;
+}
+
+#container {
+  color:#999;
+  text-transform: uppercase;
+  font-size:36px;
+  font-weight:bold;
+  padding-top:200px;  
+  position:fixed;
+
+}
+
+#flip {
+  height:auto;
+  overflow:hidden;
+}
+
+#flip > div > div {
+  color:#fff;
+  padding:4px 12px;
+  height:45px;
+  margin-bottom:45px;
+  display:inline-block;
+}
+
+#flip div:first-child {
+  animation: show 5s linear ;
+}
+
+#flip div div {
+   background:rgb(96, 1, 1);
+   padding: 2vw;
+    font-size: 4vw;
+    border-radius: 1vw;
+   
+  
+}
+
+@keyframes show {
+  0% {margin-top:-270px;}
+  5% {margin-top:-180px;}
+  33% {margin-top:-180px;}
+  38% {margin-top:-90px;}
+  66% {margin-top:-90px;}
+  71% {margin-top:0px;}
+  99.99% {margin-top:0px;}
+  100% {margin-top:-270px;}
+}
+
+p {
+  position:fixed;
+  width:100%;
+  bottom:30px;
+  font-size:12px;
+  color:#999;
+  margin-top:200px;
+}
+
+.btn{
+    padding: 20px 30px;
+    background: rgb(127,16,12);
+    background: linear-gradient(90deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+    border: none;
+    border-radius: 14px;
+    font-weight: 400;
+    font-size: 1vw;
+    cursor: pointer;
+    color: white;
+}
+.btn:hover{
+      background-color:  rgb(107, 0, 0);
+}
+
+.center h1 {
+    color: #ffffff;
+    padding: 15px 30px;
+ 
+    width: 300px;
+    transform: skew(1deg);
+    position: relative;
+    border-radius: var(--border-width);
+    --border-width: 3px;
+}
+
+.center h1::after { position: absolute;
+    content: "";
+    top: calc(-1 * var(--border-width));
+    left: calc(-1 * var(--border-width));
+    z-index: -1;
+    width: calc(100% + var(--border-width) * 2);
+    height: calc(100% + var(--border-width) * 2);
+    background: linear-gradient(
+      60deg,
+      hsl(0, 100%, 25%),
+      hsl(0, 100%, 25%),
+       hsl(0, 98%, 19%),
+      hsl(0, 98%, 20%),
+      hsl(333, 49%, 71%),
+      hsl(0, 97%, 15%),
+      hsl(0, 98%, 22%),
+      hsl(0, 100%, 25%),
+      hsl(0, 100%, 25%)
+    );
+    background-size: 300% 300%;
+    background-position: 0 50%;
+    border-radius: calc(2 * var(--border-width));
+    animation: moveGradient 4s alternate infinite;
+  }
+  
+  @keyframes moveGradient {
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  #playerName{
+    font-family:  'Racing Sans One', sans-serif;
+    padding: 1vw;
+  }
+  #main2 button {
+    margin-top: 32vw;
+}
+
+    </style>
+</head>
+<body>
+  <div id="main2">
+    <div id="nav">
+        <!-- <img class="calpolalign" src="./img/calpol-01.webp" alt=""> -->
+        <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+      </div>
+      <div class="center">
+    <h1>First Postion</h1>
+
+
+
+    <!-- new code -->
+    <div id=container>
+      
+      <div id=flip>
+        
+        <div><div id="playerName"></div></div>
+        
+      </div>
+      
+    </div>
+    <!-- new code -->
+    
+  </div>
+  <button class="btn" onclick="resultScreen()">Final Results</button>
+  </div>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+  // Initialize Firebase with your config
+
+  const database = firebase.database();
+  const userRef = database.ref('User_Details');
+
+  // Retrieve all users
+  userRef.once('value')
+    .then(snapshot => {
+      let highestUser = null;
+      let highestTotalValue = 0;
+
+      // Loop through all nodes to find the user with the highest total_value
+      snapshot.forEach(childSnapshot => {
+        const user = childSnapshot.val();
+        if (user.total_value > highestTotalValue) {
+          highestTotalValue = user.total_value;
+          highestUser = user;
+        }
+      });
+
+      // Update the HTML table with the user details
+      if (highestUser) {
+        // const tableBody = document.querySelector('#userTable tbody');
+        // const row = tableBody.insertRow();
+        // const usernameCell = row.insertCell(0);
+        // const totalValueCell = row.insertCell(1);
+        // const gameTimerValueCell = row.insertCell(2);
+        // const pointsCell = row.insertCell(3);
+        // const quiz1Q1TimerValueCell = row.insertCell(4);
+        // const quiz1Q2TimerValueCell = row.insertCell(5);
+        // const quiz1Q3TimerValueCell = row.insertCell(6);
+
+        // usernameCell.textContent = highestUser.username;
+        // totalValueCell.textContent = highestUser.total_value;
+        // gameTimerValueCell.textContent = highestUser.game1_timerValue || 'N/A';
+        // pointsCell.textContent = highestUser.points || 'N/A';
+        // quiz1Q1TimerValueCell.textContent = highestUser.quiz1_q1_timer_Value || 'N/A';
+        // quiz1Q2TimerValueCell.textContent = highestUser.quiz1_q2_timer_Value || 'N/A';
+        // quiz1Q3TimerValueCell.textContent = highestUser.quiz1_q3_timer_Value || 'N/A';
+
+      var playerName =   document.getElementById('playerName') ;
+      playerName.innerHTML =`${highestUser.username}`;
+        
+      } else {
+        console.error('No users found');
+      }
+    })
+    .catch(error => {
+      console.error('Error retrieving data:', error);
+    });
+    var selectedGame = localStorage.getItem('selectedGame');
+console.log(selectedGame)
+
+
+
+function resultScreen() {
+        window.location.href='result.html';
+    }
+
+   
+</script>
+
+</body>
+</html>
+
+
+

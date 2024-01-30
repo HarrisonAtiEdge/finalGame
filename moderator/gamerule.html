@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Rules</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script>
+// Retrieve the selected game information from localStorage
+var selectedGame = localStorage.getItem('selectedGame');
+
+// Display rules based on the selected game
+function displayRules() {
+    var rulesContainer = document.getElementById('rulesContainer');
+    var rulesbtnContainer = document.querySelector('.rulesbtn');
+
+    var rulesHTML = '';
+
+    // Create the button once
+    var button1 = document.createElement('button');
+    button1.className = 'startbtn';
+    button1.textContent = 'Start Game';
+    rulesbtnContainer.appendChild(button1);
+
+    // Update the onclick function based on the selected game
+    if (selectedGame === 'game1') {
+        // Game Rules1👇******************************
+        rulesHTML += `<p>1.Flip & match the same images in 30 Secs.</p>
+                      <p>2.On the 2nd match you will see a button.</p>
+                      <p>3.Click on the button to submit your score.</p>
+                      <p>4.Fastes finger wins!</p>`;
+        
+        button1.onclick = function() {
+            changeScreen('game1/index.html');
+        };
+    } else if (selectedGame === 'game2') {
+      rulesHTML += `<p>1.You will play Tic-Tac-Toe</p>
+                      <p>2.Mark 3 times in a row to win</p>
+                      <p>3.After finishing your turns you will see a button.</p>
+                      <p>4.Click on the button to submit your score.</p>
+                      <p>5.Fastes finger wins!</p>`;
+        
+        button1.onclick = function() {
+            changeScreen('game2/index.html');
+        };
+    } else if (selectedGame === 'game3') {
+      rulesHTML += `<p>1.You will play an Archery</p>
+                      <p>2.Earn 6 points on every hit at the center.</p>
+                      <p>3.After 15 Secs you will see a button.</p>
+                      <p>4.Click on the button to submit your score.</p>
+                      <p>5.Fastes finger wins!</p>`;
+        
+        button1.onclick = function() {
+            changeScreen('game3/index.html');
+        };
+    } else if (selectedGame === 'game4') {
+        rulesHTML += `<p>1.You will see a scambled image puzzle.</p>
+                      <p>2.Click on the image piece to select.</p>
+                      <p>2.Then click on right spot to swap.</p>
+                      <p>3.You have 30 Secs to complete the image.</p>
+                      <p>4.Fastes finger wins!</p>`;
+        
+        button1.onclick = function() {
+            changeScreen('game4/index.html');
+        };
+    
+    } else {
+        rulesHTML += '<p>No rules available for the selected game.</p>';
+        // If no game is selected, set a default onclick function or hide the button
+        button1.onclick = function() {
+            alert('No game rules available.');
+        };
+    }
+
+    // Set the concatenated HTML string to the container
+    rulesContainer.innerHTML = rulesHTML;
+}
+
+
+    </script>
+
+</head>
+
+<body onload="displayRules()">
+  <div id="main2">
+      
+    
+           <div >
+  <!-- <img class="calpolalign" src="./img/calpol-01.webp" alt=""> -->
+              <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+           </div>
+
+           
+           
+           <div class="rulesbg">
+    <ul id="userList"></ul> 
+      <div class="rulesDiv">
+          <h1>Game Rules</h1>
+          <div id="rulesContainer"></div>
+         
+      </div>
+      <div class="rulesbtn">
+      <!-- <button class="startbtn"  onclick="location.href='firstgamescreen.html'">Start Game</button> -->
+  </div>
+  </div>
+</div>
+
+
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  // const userListElement = document.getElementById('userList');
+
+  // socket.on('login', (data) => {
+  //   const listItem = document.createElement('li');
+  //   listItem.textContent = `${data.username} logged in`;
+  //   userListElement.appendChild(listItem);
+  // });
+
+  const userListElement = document.getElementById('userList');
+let loginCounter = 0; // Initialize the counter
+
+socket.on('login', (data) => {
+  loginCounter++; // Increment the counter
+  updateCounter();
+});
+
+function updateCounter() {
+  // Check if the counter element exists, create it if not
+  let counterElement = document.getElementById('loginCounter');
+  if (!counterElement) {
+    counterElement = document.createElement('div');
+    counterElement.id = 'loginCounter';
+    userListElement.appendChild(counterElement);
+  }
+
+  counterElement.textContent = `Players Connected: ${loginCounter}`;
+}
+
+
+  // Function to change the screen for connected clients
+  function changeScreen(screen) {
+    // Emit the "changeScreen" event to the server
+    socket.emit('changeScreen', screen);
+    localStorage.setItem('gamescreen', screen);
+    window.location.href = 'gamepic.html';
+  }
+
+  //   // Function to change the screen for connected clients
+  //   function changeScreen2(screen2) {
+  //     // Emit the "changeScreen" event to the server
+  //     socket.emit('changeScreen2', screen2);
+  //     localStorage.setItem('gamescreen', screen2);
+  //     window.location.href = 'gamepic.html';
+  //   }
+
+  // // Function to change the screen for connected clients
+  // function changeScreen3(screen3) {
+  //   // Emit the "changeScreen" event to the server
+  //   socket.emit('changeScreen3', screen3);
+  //   localStorage.setItem('gamescreen', screen3);
+  //   window.location.href = 'gamepic.html';
+  // }
+
+  // // Function to change the screen for connected clients
+  // function changeScreen4(screen4) {
+  //   // Emit the "changeScreen" event to the server
+  //   socket.emit('changeScreen4', screen4);
+  //   localStorage.setItem('gamescreen', screen4);
+  //   window.location.href = 'gamepic.html';
+  // }
+
+  // Function to change the screen for connected clients
+  // function changeScreen5(screen5) {
+  //   // Emit the "changeScreen" event to the server 
+  //   socket.emit('changeScreen5', screen5);
+  //   localStorage.setItem('gamescreen', screen);
+  //   window.location.href = 'gamepic.html';
+  // }
+</script>
+
+
+</html>

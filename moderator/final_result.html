@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Details</title>
+  <style>
+    table {
+      width: 50%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+    <table id="userTable">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Total Value</th>
+            <th>Game1 Points</th>
+            <th>Game1 Timer Value</th>
+            <th>Quiz1 Q1 Timer Value</th>
+            <th>Quiz1 Q2 Timer Value</th>
+            <th>Quiz1 Q3 Timer Value</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <table id="userTable2">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Total Value Game2</th>
+            <th>Game2 Points</th>
+            <th>Game2 Timer Value</th>
+            <th>Quiz2 Q1 Timer Value</th>
+            <th>Quiz2 Q2 Timer Value</th>
+            <th>Quiz2 Q3 Timer Value</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <table id="userTable3">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Total Value Game3</th>
+            <th>Game3 Points</th>
+            <th>Game3 Timer Value</th>
+            <th>Quiz3 Q1 Timer Value</th>
+            <th>Quiz3 Q2 Timer Value</th>
+            <th>Quiz3 Q3 Timer Value</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <table id="userTable4">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Total Value Game4</th>
+            <th>Game4 Points</th>
+            <th>Game4 Timer Value</th>
+            <th>Quiz4 Q1 Timer Value</th>
+            <th>Quiz4 Q2 Timer Value</th>
+            <th>Quiz4 Q3 Timer Value</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <!-- Add more tables here as needed -->
+
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+
+  const database = firebase.database();
+  const userRef = database.ref('User_Details');
+
+  // Function to update the HTML table with sorted user details
+  function updateTable(snapshot, tableId, totalValueKey) {
+    const users = [];
+    snapshot.forEach(childSnapshot => {
+      const user = childSnapshot.val();
+      user.key = childSnapshot.key;
+
+      // Check if total_value or gameX_total_value exists, if not, set it to 0
+      if (!user[totalValueKey]) {
+        userRef.child(user.key).child(totalValueKey).set(0);
+        user[totalValueKey] = 0; // Set it locally for the current rendering
+      }
+
+      users.push(user);
+    });
+
+    // Sort the array based on total_value in descending order
+    users.sort((a, b) => b[totalValueKey] - a[totalValueKey]);
+
+    // Clear existing table content
+    const tableBody = document.querySelector(`#${tableId} tbody`);
+    tableBody.innerHTML = '';
+    console.log(tableId)
+
+    // Update the HTML table with the sorted user details
+    users.forEach((user, index) => {
+      const row = tableBody.insertRow();
+      const rankCell = row.insertCell(0);
+      const usernameCell = row.insertCell(1);
+      const totalValueCell = row.insertCell(2);
+      const pointsCell = row.insertCell(3);
+
+
+
+      rankCell.textContent = index + 1;
+      usernameCell.textContent = user.username;
+      totalValueCell.textContent = user[totalValueKey];
+      pointsCell.textContent = user.points || '0';
+
+      if(tableId == 'userTable' )
+      {
+             //game 1
+      const gameTimerValueCell = row.insertCell(4);
+      const quiz1Q1TimerValueCell = row.insertCell(5);
+      const quiz1Q2TimerValueCell = row.insertCell(6);
+      const quiz1Q3TimerValueCell = row.insertCell(7);
+
+      gameTimerValueCell.textContent = user.game1_timerValue || '0';
+      quiz1Q1TimerValueCell.textContent = user.quiz1_q1_timer_Value || '0';
+      quiz1Q2TimerValueCell.textContent = user.quiz1_q2_timer_Value || '0';
+      quiz1Q3TimerValueCell.textContent = user.quiz1_q3_timer_Value || '0';
+      } else if(tableId == 'userTable2' )
+      {
+
+      //game 2
+      const game2TimerValueCell = row.insertCell(4);
+      const quiz2Q1TimerValueCell = row.insertCell(5);
+      const quiz2Q2TimerValueCell = row.insertCell(6);
+      const quiz2Q3TimerValueCell = row.insertCell(7);  
+
+      game2TimerValueCell.textContent = user.game2_timerValue || '0';
+      quiz2Q1TimerValueCell.textContent = user.quiz2_q1_timer_Value || '0';
+      quiz2Q2TimerValueCell.textContent = user.quiz2_q2_timer_Value || '0';
+      quiz2Q3TimerValueCell.textContent = user.quiz2_q3_timer_Value || '0';
+      }  
+
+      else if(tableId == 'userTable3' )
+      {
+
+      //game 2
+      const game3TimerValueCell = row.insertCell(4);
+      const quiz3Q1TimerValueCell = row.insertCell(5);
+      const quiz3Q2TimerValueCell = row.insertCell(6);
+      const quiz3Q3TimerValueCell = row.insertCell(7);  
+
+      game3TimerValueCell.textContent = user.game3_timerValue || '0';
+      quiz3Q1TimerValueCell.textContent = user.quiz3_q1_timer_Value || '0';
+      quiz3Q2TimerValueCell.textContent = user.quiz3_q2_timer_Value || '0';
+      quiz3Q3TimerValueCell.textContent = user.quiz3_q3_timer_Value || '0';
+      } 
+
+      else if(tableId == 'userTable4' )
+      {
+
+      //game 2
+      const game4TimerValueCell = row.insertCell(4);
+      const quiz4Q1TimerValueCell = row.insertCell(5);
+      const quiz4Q2TimerValueCell = row.insertCell(6);
+      const quiz4Q3TimerValueCell = row.insertCell(7);  
+
+      game4TimerValueCell.textContent = user.game4_timerValue || '0';
+      quiz4Q1TimerValueCell.textContent = user.quiz4_q1_timer_Value || '0';
+      quiz4Q2TimerValueCell.textContent = user.quiz4_q2_timer_Value || '0';
+      quiz4Q3TimerValueCell.textContent = user.quiz4_q3_timer_Value || '0';
+      } 
+
+    });
+  }
+
+  // Retrieve and sort the data for userTable
+  userRef.orderByChild('total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable', 'total_value');
+  });
+
+  // Retrieve and sort the data for userTable2
+  userRef.orderByChild('game2_total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable2', 'game2_total_value');
+  });
+
+  // Retrieve and sort the data for userTable3
+  userRef.orderByChild('game3_total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable3', 'game3_total_value');
+  });
+
+   // Retrieve and sort the data for userTable3
+   userRef.orderByChild('game4_total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable4', 'game4_total_value');
+  });
+
+</script>
+</body>
+</html>

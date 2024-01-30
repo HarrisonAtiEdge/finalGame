@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz3</title>
+    <link rel="stylesheet" href="../game1/puzzle.css" />
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // Your Firebase configuration
+        var firebaseConfig = {
+            // Your Firebase config here
+        };
+
+        var database = firebase.database();
+        var username = localStorage.getItem('username');
+        var currentQuestionIndex = 0;
+        var questions = [];
+        var mainTimer, reverseTimer;
+
+        window.onload = function() {
+            var usernameContainer = document.getElementById('username_container');
+            var questionContainer = document.getElementById('question_container');
+
+            if (username) {
+                usernameContainer.innerHTML = '<p>Welcome, ' + username + '!</p>';
+                // Load questions from Firebase
+                loadQuestions();
+            } else {
+                usernameContainer.innerHTML = '<p>No user found in localStorage</p>';
+            }
+        }
+        var counter=0;
+        function loadQuestions() {
+            var questionsRef = database.ref('quize3');
+            questionsRef.once('value')
+                .then(function(snapshot) {
+                    // Convert the snapshot to an array of questions
+                    questions = Object.values(snapshot.val());
+
+                    // Display the first question
+                    displayQuestion();
+                    
+                 
+                })
+                .catch(function(error) {
+                    console.error('Error loading questions:', error);
+                });
+        }
+
+        function displayQuestion() {
+            var questionContainer = document.getElementById('question_container');
+            var currentQuestion = questions[currentQuestionIndex];
+            counter++;
+            console.log("Counter: " + counter);
+            if (currentQuestion) {
+                var optionsHTML = currentQuestion.options.map(function(option, index) {
+                    return '<button  class="btn" onclick="selectOption(' + index + ')">' + option + '</button>';
+                }).join('');
+
+                questionContainer.innerHTML = `
+                <div  class='quiz-options1' >
+                    <h4 id="question_h1" class="question">${currentQuestion.question}</h4>
+                        <div id="options"  class='quiz-options' >${optionsHTML}</div>
+                
+                `;
+                
+                // Start the main timer
+                startMainTimer();
+
+            } else {
+                questionContainer.innerHTML = '<p>No more questions</p>';
+                window.location.href = '../../wait.html';
+            }
+        }
+        var global_seconds;
+        function startMainTimer() {
+            var mainTimerElement = document.getElementById('main_timer');
+            var seconds = 15;
+            mainTimerElement.style.display = 'block';
+            mainTimer = setInterval(function() {
+                mainTimerElement.textContent =  seconds ;
+
+                if (seconds <= 0) {
+                    clearInterval(mainTimer);
+                    hideQuestion();
+                    // Move to the next question
+                    currentQuestionIndex++;
+                    // Display the next question after a delay
+                    setTimeout(displayQuestion, 1000);
+                }
+
+                seconds--;
+                global_seconds = seconds;
+            }, 1000);
+        }
+
+        function hideQuestion() {
+            var questionContainer = document.getElementById('question_container');
+            questionContainer.innerHTML = ''; // Clear the question
+        }
+
+        async function selectOption(index) {
+    // Check if the currentQuestionIndex is within bounds
+    if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.length) {
+        // Handle the selected option, you can add your logic here
+        console.log('currentquestion:', currentQuestionIndex);
+        console.log('Selected option:', index);
+        
+
+        // Check if the selected option is correct
+        var currentQuestion = questions[currentQuestionIndex];
+
+        if (currentQuestion.correctAnswer && currentQuestion.correctAnswer.toLowerCase() === currentQuestion.options[index].toLowerCase()) {
+            // User selected the correct answer
+            console.log('Correct answer!');
+            console.log("Counter: " + counter);
+
+            // Database code
+            const database = firebase.database(); // Declare database here
+            var timerValue = global_seconds; // Replace with the actual value
+
+            // Check if the username already exists in the database
+            const userRef = database.ref('User_Details');
+            const snapshot = await userRef.orderByChild('username').equalTo(username).once('value');
+
+            if (snapshot.exists()) {
+                // Retrieve the current points
+                let currentPoints;
+                snapshot.forEach((childSnapshot) => {
+                    currentPoints = childSnapshot.val().game3_points || 0;
+                });
+
+                // Create the dynamic key for timerValue based on counter
+                var question_timerValue = 'quiz3_q' + counter + '_timer_Value';
+
+                // Update points and timerValue for the found user
+                snapshot.forEach((childSnapshot) => {
+                    const userId = childSnapshot.key;
+
+                    const updatedData = {
+                        game3_points: currentPoints + 10, // Add 10 points for correct answer
+                    };
+
+                    updatedData[question_timerValue] = timerValue; // Dynamically set the key
+
+                    userRef.child(userId).update(updatedData);
+
+                    // Add values to total_value instead of updating it
+                    const totalValue = 10 + timerValue;
+                    // currentPoints -=10;
+                    userRef.child(userId).child('game3_total_value').transaction((currentTotal) => {
+                        return (currentTotal || 0) + totalValue;
+                        
+                    });
+                    
+                    console.log("Data updated in Firebase:", updatedData);
+                    console.log("total_value updated in Firebase:", totalValue);
+                    
+                    // Redirect to 'wait.html'
+                    // window.location.href = '../../wait.html';
+                });
+            } else {
+                // User not found, add a new entry with points and timerValue
+                const newData = {
+                    game3_points: 10,
+                };
+
+                newData[question_timerValue] = timerValue; // Dynamically set the key
+
+                newData['game3_total_value'] = 10 + timerValue; // Update total_value
+
+                userRef.push({
+                    username: username,
+                    ...newData
+                });
+
+                console.log("New user added to Firebase:", newData);
+                // Redirect to 'wait.html'
+                // window.location.href = '../../wait.html';
+            }
+            // Database code end here
+
+        } else {
+            // User selected the wrong answer
+            console.log('Wrong answer!');
+        }
+
+        // Hide all buttons and question
+        var question_h1 = document.getElementById('question_h1');
+        question_h1.innerHTML = `<p>Zooming ahead! Hold tight while others catch up. Next challenge incoming!</p>`;
+
+        var optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+    } else {
+        console.log('No more questions');
+    }
+}
+
+    </script>
+
+</head>
+<body class='puzzlebackground'>
+
+    <!-- <h1>User Question Page</h1> -->    
+
+    <div class='timeralign'>
+        
+        <div id="game-timer"> 
+            <div id="outer-circle">           
+                <div id="main_timer" class="timer"></div>
+            </div> 
+        </div>
+    </div>
+
+    <div id="username_container" style="display: none;"></div>
+
+    <div id="question_container"></div>
+   
+    <!-- <p id="main_timer" style="display: none;"></p> -->
+
+</body>
+</html>

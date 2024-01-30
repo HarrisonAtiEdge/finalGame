@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Quiz 1</title>
+    <link rel="stylesheet" href="./css/quizpage.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap');
+      </style>
+
+    <script>
+
+function typeWriterEffect() {
+    var resultHeading = document.getElementById('resultHeading');
+    var text = resultHeading.textContent;
+    resultHeading.textContent = ''; // Clear the text content
+
+    var index = 0;
+    var speed = 100; // Adjust the typing speed as needed
+
+    function type() {
+        if (index < text.length) {
+            resultHeading.textContent += text.charAt(index);
+            index++;
+            setTimeout(type, speed);
+        }
+    }
+
+    // Start the typing animation
+    type();
+}
+        
+
+        // Your Firebase configuration
+        var firebaseConfig = {
+            // Your Firebase config here
+        };
+
+        var database = firebase.database();
+       
+        var currentQuestionIndex = 0;
+        var questions = [];
+        var mainTimer, reverseTimer;
+
+        window.onload = function() {
+          
+            var questionContainer = document.getElementById('question_container');
+            
+            //hidding result button
+            var result_btn = document.getElementById('result_btn');
+            result_btn.style.display = 'none';
+            // Load questions from Firebase
+            loadQuestions();
+            
+            var resultHeading = document.getElementById('resultHeading');
+            resultHeading.style.display = 'none';
+            // Load questions from Firebase
+         
+        }
+        var counter=0;
+        function loadQuestions() {
+            var questionsRef = database.ref('quize3');
+            questionsRef.once('value')
+                .then(function(snapshot) {
+                    // Convert the snapshot to an array of questions
+                    questions = Object.values(snapshot.val());
+
+                    // Display the first question
+                    displayQuestion();
+                    
+                 
+                })
+                .catch(function(error) {
+                    console.error('Error loading questions:', error);
+                });
+        }
+
+        function displayQuestion() {
+            var questionContainer = document.getElementById('question_container');
+            var currentQuestion = questions[currentQuestionIndex];
+        
+            
+            if (currentQuestion) {
+                var optionsHTML = currentQuestion.options.map(function(option, index) {
+                    return '<button  class="btn" >' + option + '</button>';
+                }).join('');
+
+                questionContainer.innerHTML = `
+                <div  class='quiz-options' >
+                    <h4 id="question_h1"  class='question' >${currentQuestion.question}</h4>
+                    <div id="options" class="quizgrid" >${optionsHTML}</div>
+                    
+                </div>
+                `;
+                
+                // Start the main timer
+                startMainTimer();
+
+            } else {
+                
+                result_btn.style.display = 'block';
+                resultHeading.style.display = 'block';
+                // resultHeading.classList.add("btn");
+                // loadQuestions();
+
+                 // Call the typewriter effect function
+                typeWriterEffect();
+            }
+        }
+        var global_seconds;
+        function startMainTimer() {
+            var mainTimerElement = document.getElementById('main_timer');
+            var seconds = 15;  //*****Timer*******************Timer*************Timer************Timer********************
+            mainTimerElement.style.display = 'block';
+            mainTimer = setInterval(function() {
+                mainTimerElement.textContent =  seconds ;
+
+                if (seconds <= 0) {
+                    clearInterval(mainTimer);
+                    hideQuestion();
+                    // Move to the next question
+                    currentQuestionIndex++;
+                    // Display the next question after a delay
+                    setTimeout(displayQuestion, 1000);
+                }
+
+                seconds--;
+                global_seconds = seconds;
+            }, 1000);
+        }
+
+        function hideQuestion() {
+            var questionContainer = document.getElementById('question_container');
+            questionContainer.innerHTML = ''; // Clear the question
+        }
+
+
+
+        
+
+        // database connection code for questions
+        async function selectOption(index) {
+    // Check if the currentQuestionIndex is within bounds
+    if (currentQuestionIndex >= 0 && currentQuestionIndex < questions.length) {
+        // Handle the selected option, you can add your logic here
+        console.log('currentquestion:', currentQuestionIndex);
+        console.log('Selected option:', index);
+
+        // Check if the selected option is correct
+        var currentQuestion = questions[currentQuestionIndex];
+        
+        if (currentQuestion.correctAnswer && currentQuestion.correctAnswer.toLowerCase() === currentQuestion.options[index].toLowerCase()) {
+            // User selected the correct answer
+            console.log('Correct answer!');
+            console.log("Counter: " + counter);
+
+            
+        } else {
+            // User selected the wrong answer
+            console.log('Wrong answer!');
+        }
+
+
+        // Hide all buttons and question
+        var question_h1 = document.getElementById('question_h1');
+        question_h1.innerHTML = 'Wait for other players';
+
+        var optionsContainer = document.getElementById('options');
+        optionsContainer.innerHTML = '';
+        
+        //Hidding next button 
+        
+    } else {
+        console.log('No more questions');
+    }
+
+
+    // ****************TypeWriter Effect 👇******************
+
+
+
+// Call the function when the window is loaded
+// window.onload = function() {
+//     // Your existing code...
+
+//     var resultHeading = document.getElementById('resultHeading');
+//     resultHeading.style.display = 'none'; // Hide initially
+
+//     // Load questions from Firebase
+//     loadQuestions();
+
+//     // Call the typewriter effect function
+//     typeWriterEffect();
+// };
+
+
+    // ****************TypeWriter Effect**👆****************
+}
+
+    </script>
+
+</head>
+<body class="quizbackground">
+    <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+    <div class='timeralign'>
+    <div id="game-timer" > 
+    <div id="outer-circle">           
+        <div id="timer"><p id="main_timer""></p></div>
+        </div> 
+    </div>
+</div>
+    <!-- <h1>Admin Quiz1 Questions</h1> -->
+
+    <div id="question_container"></div>
+   <div id="ForResult">
+   
+
+            <h1 id="resultHeading">Its Time to check Results</h1>
+          
+       <button id="result_btn" class="btn" onclick="resultScreen();">Go to result Page</button>
+   </div>
+
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  const socket = io();
+  const userListElement = document.getElementById('userList');
+
+  socket.on('login', (data) => {
+    const listItem = document.createElement('li');
+    listItem.textContent = `${data.username} logged in`;
+    userListElement.appendChild(listItem);
+  });
+
+  function resultScreen() {
+        window.location.href='third.html';
+    }
+
+</script>   
+
+
+</html>

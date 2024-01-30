@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/style.css">
+
+    <script>
+         var gamescreen = localStorage.getItem('gamescreen');   
+
+function displayRules() {
+    var rulesContainer = document.getElementById('rulesContainer');
+    var rulesBtnContainer = document.querySelector('.rulesbtn'); // Select the rulesbtn container
+    var rulesHTML = '';
+
+    if (gamescreen === 'game1/index.html') {
+        rulesHTML += '<h1>Match the same images</h1>';
+        rulesHTML += '<img src="./img/flipNmatch.webp" alt="">';
+
+        // rulesHTML += '<button onclick="navigateToGameRule(\'game1\')">Game 1</button>';
+    } else if (gamescreen === 'game2/index.html') {
+        rulesHTML += '<h1>3 turns in a row</h1>';
+        rulesHTML += '<img src="./img/X.webp" alt="">';
+        // rulesHTML += '<button onclick="navigateToGameRule(\'game2\')">Game 2</button>';
+    } else if (gamescreen === 'game3/index.html') {
+        rulesHTML += '<h1>Hit at the center</h1>';
+        rulesHTML += '<img src="./img/target1.webp" alt="">';
+        // rulesHTML += '<button onclick="navigateToGameRule(\'game3\')">Game 3</button>';
+    } else if (gamescreen === 'game4/index.html') {
+        rulesHTML += '<h1>Complete this image</h1>';
+        rulesHTML += '<img src="./img/mix2FixPic.webp" alt="">';
+        // rulesHTML += '<button onclick="navigateToGameRule(\'game4\')">Game 4</button>';
+    } else {
+        rulesHTML += '<p>No rules available for the selected game.</p>';
+    }
+
+    // Set the concatenated HTML string to the rulesContainer
+    rulesContainer.innerHTML = rulesHTML;
+
+    // Create a new button element and append it to the rulesBtnContainer
+    var newButton = document.createElement('button');
+    newButton.textContent = 'Netx to Quiz rules';
+    newButton.classList.add('startbtn');
+    newButton.onclick = function() {
+        location.href = 'quizrules.html';
+
+        
+    };
+    rulesBtnContainer.appendChild(newButton);
+}
+
+
+    </script>
+     <script>
+        function navigateToGameRule(game) {
+            // // Use localStorage to store the selected game information
+            // localStorage.setItem('selectedGame', game);
+
+            // Navigate to the gamerule.html page
+            window.location.href = 'quizrules.html';
+        }
+    </script>
+
+</head>
+
+<body onload="displayRules()">
+    <div id="main2">
+    <div>
+    <!-- <img class="calpolalign" src="./img/calpol-01.webp" alt=""> -->
+                <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+            </div>
+    <div class="rulesbg">
+        <div class="wordsToSearch">
+            
+            <!-- <h1>Hit the target to score higher</h1> -->
+            <!-- fahad line -->
+            <div id="rulesContainer"></div> 
+            <!-- <img src="./img/flipNmatch.webp" alt=""> -->
+        </div>
+        <div class="rulesbtn">
+        <!-- <button class="startbtn"  onclick="location.href='quizrules.html'">Start Quiz</button> -->
+    </div>
+    </div>
+</div>
+
+
+</body>
+
+   
+
+</html>

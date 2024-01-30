@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="./css/result.css">
+  
+  <title>Result Page</title>
+  <style>
+
+
+  @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Teko:wght@600&display=swap');
+  
+  @import url('https://fonts.googleapis.com/css2?family=Racing+Sans+One&display=swap');
+     
+   
+
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+table {
+  border-collapse: collapse;
+  margin-top: 1vw;
+  color: rgb(255, 255, 255);
+  font-size: 1.5vw;
+  font-weight: 50;
+background-color: transparent;
+}
+
+th, td {
+  padding: 0.6vw;
+  text-align: center;
+  border-bottom: 1vw solid transparent;
+}
+
+thead {
+  background: linear-gradient(135deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+}
+
+tr {
+  background: linear-gradient(135deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+  border-radius: 2vw;
+  margin-bottom: 4vw;
+  position: relative;
+  overflow: hidden; /* Hide overflow for rounded corners */
+}
+
+td:first-child {
+  border-top-left-radius: 2vw;
+  border-bottom-left-radius: 2vw;
+}
+
+td:last-child {
+  border-top-right-radius: 2vw;
+  border-bottom-right-radius: 2vw;
+}
+
+.empty-row {
+  height: 0.1vw; /* Adjust the height as needed */
+  background: none; /* Optional: Set background to none if you want it transparent */
+}
+
+.btn{
+    padding: 20px 30px;
+    background: rgb(127,16,12);
+    background: linear-gradient(90deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+    border: none;
+    border-radius: 14px;
+    font-weight: 400;
+    font-size: 1vw;
+    cursor: pointer;
+    color: white;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
+    width: 10vw;
+}
+.btn:hover{
+      background-color:  rgb(107, 0, 0);
+}
+  </style>
+</head>
+<body>
+  <div id="main">
+    <div id="nav">
+        <!-- <img class="calpolalign" src="./img/calpol-01.webp" alt=""> -->
+        <img class="calpolalign" src="./img/Calpol-Logo.webp" alt="">
+        <button class="btn" onclick="mainPage()">Home Page</button>
+        <button id="result2" class="btn" onclick="LastPage()">All Result</button>
+      </div>
+
+      <div class="center">
+        <div class="glowing-effect"></div>
+            <h1>FINAL RESULTS</h1>
+        <div class="glowing-effect"></div>
+          <div id="table-bg-div">
+              <table id="userTable">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player Name</th>
+                      <th>Total Score</th>
+                      <th>Game Secs</th>
+                      <th>Points</th>
+                      <th>Q1 Secs</th>
+                      <th>Q2 Secs</th>
+                      <th>Q3 Secs</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+              </table>
+
+              <table id="userTable2">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player Name</th>
+                      <th>Total Score</th>
+                      <th>Game Secs</th>
+                      <th>Points</th>
+                      <th>Q1 Secs</th>
+                      <th>Q2 Secs</th>
+                      <th>Q3 Secs</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+              </table>
+
+              <table id="userTable3">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player Name</th>
+                      <th>Total Score</th>
+                      <th>Game Secs</th>
+                      <th>Points</th>
+                      <th>Q1 Secs</th>
+                      <th>Q2 Secs</th>
+                      <th>Q3 Secs</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+              </table>
+
+              <table id="userTable4">
+                  <thead>
+                    <tr>
+                      <th>Rank</th>
+                      <th>Player Name</th>
+                      <th>Total Score</th>
+                      <th>Game Secs</th>
+                      <th>Points</th>
+                      <th>Q1 Secs</th>
+                      <th>Q2 Secs</th>
+                      <th>Q3 Secs</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+              </table>
+
+        </div>
+      </div>
+   </div>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-database.js"></script>
+<script src="firebase-config.js"></script>
+
+<script>
+
+  const database = firebase.database();
+  const userRef = database.ref('User_Details');
+
+  // Function to update the HTML table with sorted user details
+  function updateTable(snapshot, tableId, totalValueKey) {
+    const users = [];
+    snapshot.forEach(childSnapshot => {
+      const user = childSnapshot.val();
+      user.key = childSnapshot.key;
+
+      // Check if total_value or gameX_total_value exists, if not, set it to 0
+      if (!user[totalValueKey]) {
+        userRef.child(user.key).child(totalValueKey).set(0);
+        user[totalValueKey] = 0; // Set it locally for the current rendering
+      }
+
+      users.push(user);
+    });
+
+    // Sort the array based on total_value in descending order
+    users.sort((a, b) => b[totalValueKey] - a[totalValueKey]);
+
+    // Clear existing table content
+    const tableBody = document.querySelector(`#${tableId} tbody`);
+    tableBody.innerHTML = '';
+    console.log(tableId)
+
+    // Update the HTML table with the sorted user details
+    users.forEach((user, index) => {
+      const row = tableBody.insertRow();
+      const rankCell = row.insertCell(0);
+      const usernameCell = row.insertCell(1);
+      const totalValueCell = row.insertCell(2);
+      const pointsCell = row.insertCell(3);
+
+
+
+      rankCell.textContent = index + 1;
+      usernameCell.textContent = user.username;
+      totalValueCell.textContent = user[totalValueKey];
+      pointsCell.textContent = user.points || '0';
+
+      if(tableId == 'userTable' )
+      {
+             //game 1
+      const gameTimerValueCell = row.insertCell(4);
+      const quiz1Q1TimerValueCell = row.insertCell(5);
+      const quiz1Q2TimerValueCell = row.insertCell(6);
+      const quiz1Q3TimerValueCell = row.insertCell(7);
+
+      gameTimerValueCell.textContent = user.game1_timerValue || '0';
+      quiz1Q1TimerValueCell.textContent = user.quiz1_q1_timer_Value || '0';
+      quiz1Q2TimerValueCell.textContent = user.quiz1_q2_timer_Value || '0';
+      quiz1Q3TimerValueCell.textContent = user.quiz1_q3_timer_Value || '0';
+      } else if(tableId == 'userTable2' )
+      {
+
+      //game 2
+      const game2TimerValueCell = row.insertCell(4);
+      const quiz2Q1TimerValueCell = row.insertCell(5);
+      const quiz2Q2TimerValueCell = row.insertCell(6);
+      const quiz2Q3TimerValueCell = row.insertCell(7);  
+
+      game2TimerValueCell.textContent = user.game2_timerValue || '0';
+      quiz2Q1TimerValueCell.textContent = user.quiz2_q1_timer_Value || '0';
+      quiz2Q2TimerValueCell.textContent = user.quiz2_q2_timer_Value || '0';
+      quiz2Q3TimerValueCell.textContent = user.quiz2_q3_timer_Value || '0';
+      }  
+
+      else if(tableId == 'userTable3' )
+      {
+
+      //game 3
+      const game3TimerValueCell = row.insertCell(4);
+      const quiz3Q1TimerValueCell = row.insertCell(5);
+      const quiz3Q2TimerValueCell = row.insertCell(6);
+      const quiz3Q3TimerValueCell = row.insertCell(7);  
+
+      game3TimerValueCell.textContent = user.game3_timerValue || '0';
+      quiz3Q1TimerValueCell.textContent = user.quiz3_q1_timer_Value || '0';
+      quiz3Q2TimerValueCell.textContent = user.quiz3_q2_timer_Value || '0';
+      quiz3Q3TimerValueCell.textContent = user.quiz3_q3_timer_Value || '0';
+      } 
+
+      else if(tableId == 'userTable4' )
+      {
+
+      //game 4
+      const game4TimerValueCell = row.insertCell(4);
+      const quiz4Q1TimerValueCell = row.insertCell(5);
+      const quiz4Q2TimerValueCell = row.insertCell(6);
+      const quiz4Q3TimerValueCell = row.insertCell(7);  
+
+      game4TimerValueCell.textContent = user.game4_timerValue || '0';
+      quiz4Q1TimerValueCell.textContent = user.quiz4_q1_timer_Value || '0';
+      quiz4Q2TimerValueCell.textContent = user.quiz4_q2_timer_Value || '0';
+      quiz4Q3TimerValueCell.textContent = user.quiz4_q3_timer_Value || '0';
+      } 
+
+    });
+  }
+
+  // Retrieve and sort the data for userTable
+  userRef.orderByChild('total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable', 'total_value');
+  });
+
+  // Retrieve and sort the data for userTable2
+  userRef.orderByChild('game2_total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable2', 'game2_total_value');
+  });
+
+  // Retrieve and sort the data for userTable3
+  userRef.orderByChild('game3_total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable3', 'game3_total_value');
+  });
+
+   // Retrieve and sort the data for userTable3
+   userRef.orderByChild('game4_total_value').once('value', snapshot => {
+    updateTable(snapshot, 'userTable4', 'game4_total_value');
+  });
+
+  var selectedGame = localStorage.getItem('selectedGame');
+
+  document.getElementById('userTable').style.display='none';
+  document.getElementById('userTable2').style.display='none';
+  document.getElementById('userTable3').style.display='none';
+  document.getElementById('userTable4').style.display='none';
+  document.getElementById('result2').style.display='none';
+       
+
+  if (selectedGame==="game1") {
+        console.log(selectedGame+' played')
+        document.getElementById('userTable').style.display='block';
+  }
+  else if (selectedGame==="game2") {
+       console.log(selectedGame+' played')
+       document.getElementById('userTable2').style.display='block';
+  }
+  else if (selectedGame==="game3") {
+       console.log(selectedGame+' played')
+       document.getElementById('userTable3').style.display='block';
+  }
+  else if (selectedGame==="game4") {
+       console.log(selectedGame+' played')
+       document.getElementById('userTable4').style.display='block';
+       document.getElementById('result2').style.display='block';
+       
+      }
+  else {
+    console.log("No game selected");
+    
+  }
+  function mainPage() {
+        window.location.href='gamepage.html';
+    }
+
+    function LastPage() {
+        window.location.href='result2.html';
+    }
+
+</script>
+
+</body>
+</html>

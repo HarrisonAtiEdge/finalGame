@@ -1,0 +1,69 @@
+<!-- moderator/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moderator Interface</title>
+</head>
+<body>
+  <h1>Moderator Interface</h1>
+
+  <ul id="userList"></ul>
+
+  <!-- Add a button to change the screen for connected clients -->
+  <button onclick="changeScreen('game1.html')">Go to Game 1</button>
+  <br><br>
+  <button onclick="changeScreen2('game2.html')">Go to Game 2</button>
+  <br><br>
+  <button onclick="changeScreen3('game3.html')">Go to Game 3</button>
+  <br><br>
+  <button onclick="changeScreen4('game4.html')">Go to Game 4</button>
+  <br><br>
+  <button onclick="changeScreen5('game5.html')">Go to Game 5</button>
+  <br><br>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const userListElement = document.getElementById('userList');
+
+    socket.on('login', (data) => {
+      const listItem = document.createElement('li');
+      listItem.textContent = `${data.username} logged in`;
+      userListElement.appendChild(listItem);
+    });
+
+    // Function to change the screen for connected clients
+    function changeScreen(screen) {
+      // Emit the "changeScreen" event to the server
+      socket.emit('changeScreen', screen);
+      localStorage.setItem('selectedGame', screen);
+      window.location.href = 'gamerule.html';
+    }
+
+    // Function to change the screen for connected clients
+    function changeScreen2(screen2) {
+      // Emit the "changeScreen" event to the server
+      socket.emit('changeScreen2', screen2);
+    }
+
+    // Function to change the screen for connected clients
+    function changeScreen3(screen3) {
+      // Emit the "changeScreen" event to the server
+      socket.emit('changeScreen3', screen3);
+    }
+
+    // Function to change the screen for connected clients
+    function changeScreen4(screen4) {
+      // Emit the "changeScreen" event to the server
+      socket.emit('changeScreen4', screen4);
+    }
+
+    // Function to change the screen for connected clients
+    function changeScreen5(screen5) {
+      // Emit the "changeScreen" event to the server
+      socket.emit('changeScreen5', screen5);
+    }
+  </script>
+</body>
+</html>

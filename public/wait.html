@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../moderator/css/waiting.css">
+    <link rel="stylesheet" href="../moderator/css/style.css">
+    <title>Wait Screen</title>
+</head>
+<body class="backgroundwaiting">
+    
+  <div class="glassalign" >
+    <p>Waiting for Admin...</p>
+    
+    <div class="hourglass"></div> 
+
+</div>
+    <div id="content"></div>
+
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const contentElement = document.getElementById('content');
+    
+        socket.on('changeScreen', (screen) => {
+        // Change the content dynamically based on the received screen
+        window.location.href = `${screen}`;
+        });
+
+        // socket.on('changeScreen2', (screen2) => {
+        //   // Change the content dynamically based on the received screen
+        //   window.location.href='game2/index.html';
+        // });
+
+        // socket.on('changeScreen3', (screen3) => {
+        //   // Change the content dynamically based on the received screen
+        //   window.location.href='game3/index.html';
+        // });
+
+        // socket.on('changeScreen4', (screen4) => {
+        //   // Change the content dynamically based on the received screen
+        //   window.location.href='game4/index.html';
+        // });
+
+        // socket.on('changeScreen5', (screen5) => {
+        //   // Change the content dynamically based on the received screen
+        //   window.location.href='game5/index.html';
+
+
+
+
+
+        // });
+        socket.on('quiz1Screen', (screen) => {
+          // Change the content dynamically based on the received screen
+          window.location.href=`${screen}`;
+        });
+        
+    
+      </script>
+</body>
+</html>

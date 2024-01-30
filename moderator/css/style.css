@@ -1,0 +1,348 @@
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial';
+}
+#main{
+    width: 100%;
+    height: 100vh;
+background-image: url(../img/Calpol-MainBg.webp);
+background-size: cover;
+}
+
+
+#main2{
+    width: 100%;
+    height: 100vh;
+background-image: url(../img/newBg.webp);
+background-size: cover;
+}
+#main3{
+    width: 100%;
+    height: 100vh;
+  
+background-image: url(../img/caplpoltheme3.jpg);
+}
+#nav{
+    margin: 0 auto;
+    width: 100%;
+    height: 6vw;
+    /* background-color:rgb(255, 199, 199); */
+
+}
+.calpolalign{
+    padding: 2vw;
+width: 8vw;
+/* right: 2vw; */
+margin-left: auto;
+display: block;
+
+}
+
+#nav #urlCon{
+    display: flex;
+    justify-content: center;
+    /* margin: -3vw; */
+    margin-top: -5.5rem;
+padding: 2vw 0;
+/* background-color: #f6938a; */
+}
+.url{
+    display: flex;
+    justify-content: space-between;
+    padding: .7vw;
+    width: 22vw;
+    border-radius: 4.2vw;
+    /* border-radius: 50px; */
+    background: rgb(106,9,12);
+    background: linear-gradient(90deg, rgba(106,9,12,1) 0%, rgba(210,13,21,1) 35%, rgba(250,255,0,1) 100%);
+box-shadow:  .3vw .3vw .3vw #665656,
+-.3vw -.3vw 2vw #ffffff;
+
+}
+.url svg {
+    padding: 1vw  0  0 1vw;
+}
+.link{
+    background: rgb(106,9,12);
+    background: linear-gradient(135deg, rgba(106,9,12,1) 0%, rgba(210,13,21,1) 35%, rgba(250,255,0,1) 100%);
+    padding: 2vw 2vw 2vw 1.5vw;
+    color: #ffffff;
+    font-weight: 100;
+    font-size: 2vw;
+    border-radius: 0 4.2vw 4.2vw  0;
+}
+.games-con{
+    /* background-color: #382723; */
+    width: 80vw;
+    margin: auto;
+    margin-top:1vw ;
+    padding: 1vw;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.games-con1{
+    /* background-color: #382723; */
+    width: 75vw;
+    margin: auto;
+    margin-top:1vw ;
+    padding: 1vw;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.gamediv img{
+width: 12vw;
+}
+.gamediv button{
+    width: 9vw;
+    background: rgb(127,16,12);
+    background: linear-gradient(90deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+    box-shadow:  0.1vw 0.1vw 0.1vw #665656, -0.1vw -0.1vw 1vw #ffffff;
+    padding: 1vw;
+    border-radius: 2vw;
+    color: white;
+    font-weight: 80;
+    font-size: 1.2vw;
+    cursor: pointer;
+    margin-left: 1.5vw;
+    text-align: center;
+    border: none;
+}
+
+#ForResult{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 1vw;
+}
+
+#resultHeading{
+    font-family: 'Racing Sans One', sans-serif;
+    font-size: 7vw;
+    font-weight: 600;
+    margin-bottom: 4vw;
+    color: white;
+    text-shadow:
+    -1px -1px 0 #000, /* Top left shadow */
+     1px -1px 0 #000, /* Top right shadow */
+    -1px  1px 0 #000, /* Bottom left shadow */
+     1px  1px 0 #000;
+}
+
+
+
+.forBtn{
+cursor: pointer;
+}
+.gamediv button:hover{
+    background:  rgb(128, 15, 11);
+}
+/* ******************************************** */
+.rulesbg{
+    width: 100%;
+    /* height: 100vh; */
+    /* background-color: #F7D8D5; */
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.rulesbg img{
+    width: 14vw;
+    margin: 2vw;
+}
+.rulesDiv{
+    margin-top: 4vw;
+    padding:  3vw;
+    border-radius: 2vw;
+    background: linear-gradient(145deg, #c9c4d4, #efe9fd);
+    /* box-shadow:  10px 10px 60px #beb9c9,
+                 -10px -10px 60px #fffbff; */
+            }
+.rulesDiv h1{
+   
+    color: black;
+    font-weight: 80;
+    font-size: 2.5vw;
+    padding: .5rem;
+
+}
+.rulesDiv p{
+    font-weight: 80;
+    font-size: 1.7vw;
+    padding: .5vw;
+    color: black;
+}
+
+#userList{
+    color: white;
+    padding-left: 100px;
+}
+
+#rulesContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#rulesContainer img{
+    width: 18vw;
+}
+
+/* ***************wordsToSearch👇****************** */
+.wordsToSearch{
+  
+    padding:  2.5vw;
+    border-radius: 2vw;
+    background: linear-gradient(145deg, #c9c4d4, #efe9fd);
+display: flex;
+flex-direction: column;
+align-items: center;
+            }
+.wordsToSearch h1{
+   
+    color: black;
+    font-weight: 80;
+    font-size: 2.5vw;
+    padding: .5rem;
+
+}
+.wordsToSearch p{
+    font-weight: 80;
+    font-size: 1.7vw;
+    padding: .5vw;
+    color: black;
+}
+/* ***************wordsToSearch👆****************** */
+
+.rulesbtn{
+    position: absolute;
+    padding-top: 35vw;
+    /* right: 8vw; */
+}
+.newrulesbtn{
+    position: absolute;
+    bottom: 5vw;
+    right: 2vw;
+}
+.startbtn{
+    padding: 20px 30px;
+    /* margin-top: 2em; */
+    background: rgb(127,16,12);
+background: linear-gradient(90deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+box-shadow:  0.1vw 0.1vw 0.1vw #665656, -0.1vw -0.1vw 1vw #ffffff;
+    border: none;
+    border-radius: 18px;
+    font-weight: 300;
+    font-size: 1vw;
+    cursor: pointer;
+    color: white;
+}
+.startbtn:hover{
+      background-color:  rgba(127,16,12,1);
+}
+.logoalign{
+    position: relative;
+    width: 150px;
+    float:right;
+    margin-top:16px;
+    cursor: pointer;
+}
+.firstcontainer{
+    padding:  5vw;
+    border-radius: 41px;
+    width: 1000px;
+    border-radius: 50px;
+    background: transparent;
+    /* box-shadow:  20px 20px 60px #d2b8b5,
+                 -20px -20px 60px #fff8f5; */
+                 display: flex;
+                 align-items: center;
+                 justify-content: center;
+}
+.firstcontainer img{
+
+width: 35vw;   
+box-shadow:  .3vw .3vw .3vw #665656,
+-.3vw -.3vw 2vw #ffffff;
+}
+.containeralign{
+  padding: 1.3rem 20rem;
+   
+}
+.backgroundwaiting{
+    background-image: url(../img/Calpol_Bg.webp);
+}   
+
+.glassalign{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.glassalign p{
+    color: white;
+  font-size: larger;
+  font-style: italic;
+  text-align: center;
+  padding-bottom: 2.5vw;
+}
+
+.center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.center h2{
+    margin:8vw 1vw 0vw 1vw;
+    color: white;
+
+}
+.forBtn .yellow-Btn{
+    background-image: linear-gradient(to right, #ffbb00 , #ff3700);
+}
+
+
+.forBtn .yellow-Btn:hover{
+    background-image: linear-gradient(to left, #ffbb01 , #ff3700);
+}
+
+
+
+.btn2{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+    /* padding: 0.4 0.2rem; */
+    width: 10rem;
+    margin-left: 2em;
+    border-radius: .5vw;
+    background: rgb(127,16,12);
+    background: linear-gradient(90deg, rgba(127,16,12,1) 0%, rgba(254,0,0,1) 50%, rgba(127,16,12,1) 100%);
+    /* box-shadow:  .1em .1em .1em #665656,
+                 -.1em -.1em 1em #ffffff; */
+    height: 2em;
+    cursor: pointer;
+    font-size: 1vw;
+    /* margin-bottom: 3rem; */
+    z-index: 1000;
+    color: white;
+    border: none;
+}
+
+.btn2:hover{
+    background-color: #fff;
+    color: white;
+}
